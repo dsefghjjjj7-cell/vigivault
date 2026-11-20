@@ -3,103 +3,191 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#142b46">
 <title>VigiVault | Digital Marketplace</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172b43}
-header{background:#142b46;color:white;padding:18px 20px}
+body{margin:0;font-family:Arial;background:#f4f7fb;color:#172b43}
+header{background:#142b46;color:white;padding:20px}
 .brand{font-size:25px;font-weight:bold}
 .brand span{color:#65b8ff}
-nav{display:flex;gap:18px;overflow:auto;margin-top:18px}
-nav a{color:white;text-decoration:none;font-size:14px;white-space:nowrap}
-main{padding:20px;max-width:1000px;margin:auto}
-.hero{background:linear-gradient(135deg,#142b46,#28649a);color:white;padding:30px 22px;border-radius:17px}
-.hero h1{font-size:30px;margin:0 0 12px}
-.hero p{line-height:1.6;color:#dcecff}
-.btn{display:inline-block;background:#65b8ff;color:#102944;padding:12px 18px;border:0;border-radius:9px;font-weight:bold;text-decoration:none;cursor:pointer}
-h2{margin-top:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px}
-.card{background:white;padding:17px;border-radius:13px;box-shadow:0 3px 12px #172b4310}
-.card .emoji{font-size:30px}
-.card h3{font-size:16px}
-.price{font-weight:bold;color:#1765a5}
-.small{color:#64748b;font-size:13px}
-section{margin-bottom:28px}
-footer{text-align:center;padding:25px;background:#142b46;color:white}
+nav{display:flex;gap:18px;margin-top:15px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none}
+main{max-width:850px;margin:auto;padding:20px}
+.hero,.card{padding:22px;border-radius:14px;margin-bottom:18px}
+.hero{background:linear-gradient(135deg,#142b46,#28649a);color:white}
+.card{background:white;box-shadow:0 3px 12px #172b4310}
+input{width:100%;padding:13px;margin:7px 0;border:1px solid #ccd5df;border-radius:8px}
+button,.btn{background:#65b8ff;color:#102944;padding:12px 18px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+button{margin:5px 3px 5px 0}
+.small{font-size:13px;color:#64748b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.hidden{display:none}
+#message{padding:10px;background:#eaf4ff;border-radius:8px}
+footer{text-align:center;background:#142b46;color:white;padding:25px}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">Vigi<span>Vault</span></div>
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#products">Products</a>
-    <a href="#wallet">Wallet</a>
-    <a href="#account">My Account</a>
-  </nav>
+ <div class="brand">Vigi<span>Vault</span></div>
+ <nav>
+  <a href="#home">Home</a>
+  <a href="#products">Products</a>
+  <a href="#wallet">Wallet</a>
+  <a href="#account">My Account</a>
+ </nav>
 </header>
 
 <main>
 <section class="hero" id="home">
-  <h1>Welcome to VigiVault</h1>
-  <p>Your digital marketplace. Discover digital products, software, online tools and services in one place.</p>
-  <a href="#products" class="btn">Explore Products</a>
+ <h1>Welcome to VigiVault</h1>
+ <p>Your digital marketplace for proxies, AI tools, software and digital products.</p>
+ <a class="btn" href="#products">Explore Products</a>
 </section>
 
 <section id="products">
-  <h2>Featured Products</h2>
-  <div class="grid">
-    <div class="card">
-      <div class="emoji">🌐</div>
-      <h3>Proxy Services</h3>
-      <p class="small">Digital proxy products and access.</p>
-      <p class="price">Explore options</p>
-    </div>
-    <div class="card">
-      <div class="emoji">🤖</div>
-      <h3>AI Tools</h3>
-      <p class="small">Discover useful AI services.</p>
-      <p class="price">Explore options</p>
-    </div>
-    <div class="card">
-      <div class="emoji">📱</div>
-      <h3>Digital Products</h3>
-      <p class="small">Digital products and resources.</p>
-      <p class="price">Explore options</p>
-    </div>
-    <div class="card">
-      <div class="emoji">🚀</div>
-      <h3>Social Media</h3>
-      <p class="small">Social media services and tools.</p>
-      <p class="price">Explore options</p>
-    </div>
-  </div>
-</section>
-
-<section id="wallet">
-  <h2>My Wallet</h2>
-  <div class="card">
-    <p class="small">Wallet preview</p>
-    <h2>₦0.00</h2>
-    <p class="small">Your wallet will be activated after secure account and payment setup.</p>
-  </div>
+ <h2>Our Categories</h2>
+ <div class="grid">
+  <div class="card">🌐 <h3>Proxy Services</h3></div>
+  <div class="card">🤖 <h3>AI Tools</h3></div>
+  <div class="card">📱 <h3>Digital Products</h3></div>
+  <div class="card">🚀 <h3>Social Media Services</h3></div>
+ </div>
 </section>
 
 <section id="account">
-  <h2>Customer Account</h2>
-  <div class="card">
-    <p>Sign in and customer registration will be connected in a later development stage.</p>
-    <p class="small">Your orders and digital purchases will appear here once the account system is ready.</p>
-  </div>
+ <h2>Customer Account</h2>
+ <div class="card" id="authBox">
+  <h3>Create an account</h3>
+  <input id="name" placeholder="Full name">
+  <input id="email" type="email" placeholder="Email address">
+  <input id="password" type="password" placeholder="Password (at least 6 characters)">
+  <button onclick="register()">Create Account</button>
+  <hr>
+  <h3>Already registered? Sign in</h3>
+  <input id="loginEmail" type="email" placeholder="Email address">
+  <input id="loginPassword" type="password" placeholder="Password">
+  <button onclick="login()">Sign In</button>
+ </div>
+
+ <div class="card hidden" id="dashboard">
+  <h3>My Dashboard</h3>
+  <p id="welcome"></p>
+  <p>Account email: <span id="userEmail"></span></p>
+  <button onclick="loadWallet()">Refresh Wallet</button>
+  <button onclick="logout()">Sign Out</button>
+ </div>
+ <p id="message" class="small">Connect your account to get started.</p>
+</section>
+
+<section id="wallet">
+ <h2>My Wallet</h2>
+ <div class="card">
+  <p class="small">Available wallet balance</p>
+  <h2 id="balance">₦0.00</h2>
+  <p class="small">Your wallet balance will appear here after you sign in.</p>
+  <p class="small">Deposits and purchases will be activated after secure payment setup.</p>
+ </div>
 </section>
 </main>
 
 <footer>
-  <strong>VigiVault</strong>
-  <p>Your Digital Marketplace</p>
-  <p class="small">© 2026 VigiVault. All rights reserved.</p>
+ <strong>VigiVault</strong>
+ <p>Your Digital Marketplace</p>
+ <p class="small">© 2026 VigiVault</p>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://kttmvsohldtoliojdciw.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_uSA360DIiv4JAUALaDJTiw_25bmxl2i";
+
+const db = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+function message(text){
+ document.getElementById("message").textContent=text;
+}
+
+async function register(){
+ const name=document.getElementById("name").value.trim();
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+
+ if(!name || !email || password.length<6){
+  message("Enter your name, email and a password of at least 6 characters.");
+  return;
+ }
+
+ const {data,error}=await db.auth.signUp({
+  email,password,
+  options:{data:{full_name:name}}
+ });
+
+ if(error){message(error.message);return;}
+
+ message("Registration submitted. Check your email if confirmation is required.");
+ if(data.session) showDashboard(data.session.user);
+}
+
+async function login(){
+ const email=document.getElementById("loginEmail").value.trim();
+ const password=document.getElementById("loginPassword").value;
+
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+ if(error){message(error.message);return;}
+
+ showDashboard(data.user);
+}
+
+async function showDashboard(user){
+ document.getElementById("authBox").classList.add("hidden");
+ document.getElementById("dashboard").classList.remove("hidden");
+ document.getElementById("welcome").textContent="Welcome to VigiVault!";
+ document.getElementById("userEmail").textContent=user.email;
+ message("You are signed in.");
+ await loadWallet();
+}
+
+async function loadWallet(){
+ const {data:{user}}=await db.auth.getUser();
+ if(!user){message("Please sign in first.");return;}
+
+ const {data,error}=await db
+  .from("wallets")
+  .select("balance,currency")
+  .eq("user_id",user.id)
+  .maybeSingle();
+
+ if(error){message("Could not load wallet: "+error.message);return;}
+
+ if(data){
+  document.getElementById("balance").textContent=
+   new Intl.NumberFormat("en-NG",{
+    style:"currency",currency:data.currency||"NGN"
+   }).format(Number(data.balance));
+ }else{
+  message("Your wallet has not been created yet. Contact the administrator.");
+ }
+}
+
+async function logout(){
+ await db.auth.signOut();
+ document.getElementById("authBox").classList.remove("hidden");
+ document.getElementById("dashboard").classList.add("hidden");
+ document.getElementById("balance").textContent="₦0.00";
+ message("You have signed out.");
+}
+
+async function start(){
+ const {data:{session}}=await db.auth.getSession();
+ if(session) showDashboard(session.user);
+}
+
+start();
+</script>
 </body>
 </html>
