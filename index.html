@@ -935,8 +935,7 @@ async function checkPlatfoneCountries(){
    );
   });
 
-  message("Loaded " + result.length + " countries successfully!");
-
+  message("Country data: " + JSON.stringify(result.slice(0,3)));
  }catch(error){
   message("Connection failed: " + error.message);
  }
