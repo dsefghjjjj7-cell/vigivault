@@ -995,7 +995,7 @@ async function checkPlatfoneCountries(){
    return;
   }
 
-  message("Platform found: " + selected.name);
+  message("Platform: " + selected.name + " | Service ID: " + selected.service_id + " | Country ID: " + country);
  }catch(error){
   message("Connection failed: " + error.message);
  }
