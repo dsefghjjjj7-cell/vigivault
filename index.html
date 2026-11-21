@@ -746,7 +746,7 @@ start();
 
  try{
   const response = await fetch(
-   SUPABASE_URL + "/functions/v1/platfone-sms?action=services",
+   SUPABASE_URL + "/functions/v1/platfone-sms?action=countries",
    {
     method:"GET",
     headers:{
@@ -774,8 +774,19 @@ result.forEach(country => {
   new Option(country.name, country.country_id)
  );
 });
-message("Services data: " + JSON.stringify(result));
+const countrySelect = document.getElementById("smsCountry");
 
+countrySelect.replaceChildren(
+ new Option("Choose a country", "")
+);
+
+result.forEach(country => {
+ countrySelect.add(
+  new Option(country.name, country.country_id)
+ );
+});
+
+message("Loaded " + result.length + " countries successfully!");
  }catch(error){
   message("Connection failed: " + error.message);
  }
