@@ -88,12 +88,36 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 </section>
 
 <section id="wallet">
+<section id="wallet">
  <h2>My Wallet</h2>
+
  <div class="card">
   <p class="small">Available wallet balance</p>
   <h2 id="balance">₦0.00</h2>
-  <p class="small">Your wallet balance will appear here after you sign in.</p>
-  <p class="small">Deposits and purchases will be activated after secure payment setup.</p>
+  <button onclick="loadWallet()">Refresh Wallet</button>
+ </div>
+
+ <div class="card">
+  <h3>Add Funds</h3>
+  <p>Enter the amount you want to deposit.</p>
+
+  <input
+   id="depositAmount"
+   type="number"
+   min="100"
+   placeholder="Amount in Naira"
+  >
+
+  <button onclick="createDeposit()">Continue to Deposit</button>
+
+  <p class="small">
+   Your deposit will remain pending until the administrator confirms payment.
+  </p>
+ </div>
+
+ <div class="card">
+  <h3>My Deposit Requests</h3>
+  <div id="depositHistory">Sign in to view your deposits.</div>
  </div>
 </section>
 </main>
@@ -225,6 +249,7 @@ async function showDashboard(user){
  document.getElementById("userEmail").textContent = user.email;
  message("You are signed in.");
  await loadWallet();
+await loadDeposits();
 }
 
 async function loadWallet(){
@@ -260,7 +285,92 @@ async function loadWallet(){
   message("Wallet problem: " + error.message);
  }
 }
+async function createDeposit(){
+ try{
+  const amount = Number(
+   document.getElementById("depositAmount").value
+  );
 
+  if(!Number.isFinite(amount) || amount < 100){
+   message("Enter a valid amount of at least ₦100.");
+   return;
+  }
+
+  const {data:{user},error:userError} =
+   await db.auth.getUser();
+
+  if(userError || !user){
+   message("Please sign in before requesting a deposit.");
+   return;
+  }
+
+  message("Creating your deposit request...");
+
+  const reference = "VV-" +
+   crypto.randomUUID().replace(/-/g,"").toUpperCase();
+
+  const {data,error} = await db
+   .from("deposit_requests")
+   .insert({
+    user_id:user.id,
+    amount:amount,
+    reference:reference
+   })
+   .select()
+   .single();
+
+  if(error){
+   message("Deposit request failed: " + error.message);
+   return;
+  }
+
+  document.getElementById("depositAmount").value = "";
+
+  message(
+   "Deposit request created. Reference: " +
+   data.reference +
+   ". Status: Pending."
+  );
+
+  await loadDeposits();
+
+ }catch(error){
+  message("Deposit problem: " + error.message);
+ }
+}
+
+async function loadDeposits(){
+ const {data:{user}} = await db.auth.getUser();
+
+ if(!user) return;
+
+ const {data,error} = await db
+  .from("deposit_requests")
+  .select("amount,reference,status,created_at")
+  .eq("user_id",user.id)
+  .order("created_at",{ascending:false});
+
+ if(error){
+  document.getElementById("depositHistory").textContent =
+   "Could not load deposit history.";
+  return;
+ }
+
+ const history = document.getElementById("depositHistory");
+
+ if(!data.length){
+  history.textContent = "No deposit requests yet.";
+  return;
+ }
+
+ history.innerHTML = data.map(item =>
+  `<div class="card">
+   <strong>₦${Number(item.amount).toLocaleString("en-NG")}</strong>
+   <p>Reference: ${item.reference}</p>
+   <p>Status: ${item.status}</p>
+  </div>`
+ ).join("");
+   }
 async function logout(){
  await db.auth.signOut();
  document.getElementById("authBox").classList.remove("hidden");
