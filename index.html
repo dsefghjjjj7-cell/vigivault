@@ -931,7 +931,7 @@ async function checkPlatfoneCountries(){
 
   result.forEach(country => {
    countrySelect.add(
-    new Option(country.name, country.country_id)
+    new Option(country.name, country.id || country.country_id)
    );
   });
 
