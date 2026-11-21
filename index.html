@@ -736,6 +736,39 @@ async function start(){
 }
 
 start();
+ async function checkPlatfoneCountries(){
+ const {data,error:sessionError} = await db.auth.getSession();
+
+ if(sessionError || !data.session){
+  message("Please sign in first.");
+  return;
+ }
+
+ try{
+  const response = await fetch(
+   SUPABASE_URL + "/functions/v1/platfone-sms?action=countries",
+   {
+    method:"GET",
+    headers:{
+     "apikey":SUPABASE_KEY,
+     "Authorization":"Bearer " + data.session.access_token
+    }
+   }
+  );
+
+  const result = await response.json();
+
+  if(!response.ok){
+   message("Connection error: " + (result.error || response.status));
+   return;
+  }
+
+  console.log("Platfone countries:",result);
+  message("Country list received successfully. Check browser console.");
+ }catch(error){
+  message("Connection failed: " + error.message);
+ }
+ }
 </script>
 </body>
 </html>
