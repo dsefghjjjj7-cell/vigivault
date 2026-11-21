@@ -132,6 +132,14 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 <div id="myOrders">
  Sign in to view your orders.
 </div>
+
+  <hr>
+
+<h3>My Products & Downloads</h3>
+<div id="myDeliveries">
+ Your purchased products will appear here.
+</div>
+  
  </div>
 
  <div class="card hidden" id="adminPanel">
@@ -334,6 +342,7 @@ async function showDashboard(user){
 await loadDeposits();
 await loadTransactions(); 
  await loadOrders();
+ await loadDeliveries();
 
  if(isAdmin){
   await loadAdminDeposits();
@@ -636,7 +645,44 @@ async function loadTransactions(){
   area.append(card);
  });
    }
-async function loadProducts(){
+async function loadDeliveries(){
+ const area = document.getElementById("myDeliveries");
+ area.textContent = "Loading your products...";
+
+ const {data,error} = await db
+  .from("digital_deliveries")
+  .select("id,delivery_content,delivered_at")
+  .eq("status","delivered")
+  .order("delivered_at",{ascending:false});
+
+ if(error){
+  area.textContent = "Could not load deliveries: " + error.message;
+  return;
+ }
+
+ if(!data || !data.length){
+  area.textContent = "You have no delivered products yet.";
+  return;
+ }
+
+ area.replaceChildren();
+
+ data.forEach(item=>{
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const title = document.createElement("h4");
+  title.textContent = "Your Purchased Product";
+
+  const content = document.createElement("p");
+  content.textContent = item.delivery_content;
+
+  card.append(title,content);
+  area.append(card);
+ });
+}
+ 
+ async function loadProducts(){
  const area = document.getElementById("productList");
  area.textContent = "Loading products...";
 
