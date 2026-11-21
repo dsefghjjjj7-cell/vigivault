@@ -257,7 +257,8 @@ async function showDashboard(user){
  message("You are signed in.");
 
  await loadWallet();
- await loadDeposits();
+await loadDeposits();
+await loadTransactions();
 
  if(isAdmin){
   await loadAdminDeposits();
@@ -429,6 +430,68 @@ async function loadDeposits(){
  });
 }
 
+async function loadTransactions(){
+ try{
+  const {data:{user},error:userError} = await db.auth.getUser();
+
+  const history = document.getElementById("transactionHistory");
+
+  if(userError || !user){
+   history.textContent = "Please sign in to view transactions.";
+   return;
+  }
+
+  history.textContent = "Loading transactions...";
+
+  const {data,error} = await db
+   .from("wallet_transactions")
+   .select("type,amount,status,reference,description,created_at")
+   .eq("user_id",user.id)
+   .order("created_at",{ascending:false});
+
+  if(error){
+   history.textContent = "Could not load transactions: " + error.message;
+   return;
+  }
+
+  if(!data || !data.length){
+   history.textContent = "No wallet transactions yet.";
+   return;
+  }
+
+  history.replaceChildren();
+
+  data.forEach(item=>{
+   const card = document.createElement("div");
+   card.className = "card";
+
+   const amount = document.createElement("strong");
+   amount.textContent =
+    (item.type === "deposit" ? "+" : "-") +
+    "₦" + Number(item.amount).toLocaleString("en-NG");
+
+   const type = document.createElement("p");
+   type.textContent = "Type: " + item.type;
+
+   const status = document.createElement("p");
+   status.textContent = "Status: " + item.status;
+
+   const reference = document.createElement("p");
+   reference.textContent = "Reference: " + (item.reference || "N/A");
+
+   const date = document.createElement("p");
+   date.textContent = "Date: " + new Date(item.created_at).toLocaleString();
+
+   card.append(amount,type,status,reference,date);
+   history.append(card);
+  });
+
+ }catch(error){
+  document.getElementById("transactionHistory").textContent =
+   "Transaction error: " + error.message;
+ }
+ }
+    
 async function loadAdminDeposits(){
  try{
   const {data:{user},error:userError} = await db.auth.getUser();
