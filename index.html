@@ -119,7 +119,16 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   >
 
   <button onclick="createDeposit()">Continue to Deposit</button>
-
+<div id="transferInstructions" class="card hidden">
+  <h3>Bank Transfer Instructions</h3>
+  <p>Bank: MoneyMaster PSB</p>
+  <p>Account Name: Lazarus Job</p>
+  <p>Account Number: To be configured</p>
+  <p>Payment Reference:</p>
+  <h3 id="transferReference"></h3>
+  <p>Transfer the exact amount requested.</p>
+  <p>Your payment will be checked before your wallet is credited.</p>
+</div>
   <p class="small">
    Your deposit will remain pending until the administrator confirms payment.
   </p>
