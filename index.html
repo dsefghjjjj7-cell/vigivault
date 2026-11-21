@@ -559,9 +559,9 @@ async function loadTransactions(){
    "Transaction error: " + error.message;
  }
  }
- async function loadProducts(){
+ 
+async function loadProducts(){
  const area = document.getElementById("productList");
-
  area.textContent = "Loading products...";
 
  const {data,error} = await db
@@ -598,10 +598,40 @@ async function loadTransactions(){
   const price = document.createElement("strong");
   price.textContent = "₦" + Number(item.price).toLocaleString("en-NG");
 
-  card.append(name,category,description,price);
+  const buyButton = document.createElement("button");
+  buyButton.textContent = "Buy Now";
+  buyButton.addEventListener("click",()=>{
+   buyProduct(item.id,item.name,Number(item.price));
+  });
+
+  card.append(name,category,description,price,buyButton);
   area.append(card);
  });
-} 
+}
+
+async function buyProduct(productId,productName,price){
+ const confirmed = confirm(
+  "Buy " + productName + " for ₦" +
+  price.toLocaleString("en-NG") + "?"
+ );
+
+ if(!confirmed) return;
+
+ message("Processing your purchase...");
+
+ const {data,error} = await db.rpc("purchase_product",{
+  p_product_id:productId
+ });
+
+ if(error){
+  message("Purchase failed: " + error.message);
+  return;
+ }
+
+ message(data || "Purchase successful!");
+ await loadWallet();
+}
+ 
  async function addProduct(){
  const name = document.getElementById("productName").value.trim();
  const category = document.getElementById("productCategory").value.trim();
