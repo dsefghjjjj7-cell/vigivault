@@ -55,6 +55,11 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   <div class="card">📱 <h3>Digital Products</h3></div>
   <div class="card">🚀 <h3>Social Media Services</h3></div>
  </div>
+
+ <h2>Available Products</h2>
+ <div id="productList">
+  Loading products...
+ </div>
 </section>
 
 <section id="account">
@@ -491,7 +496,49 @@ async function loadTransactions(){
    "Transaction error: " + error.message;
  }
  }
-    
+ async function loadProducts(){
+ const area = document.getElementById("productList");
+
+ area.textContent = "Loading products...";
+
+ const {data,error} = await db
+  .from("products")
+  .select("id,name,description,category,price")
+  .eq("is_active",true)
+  .order("created_at",{ascending:false});
+
+ if(error){
+  area.textContent = "Could not load products: " + error.message;
+  return;
+ }
+
+ if(!data || !data.length){
+  area.textContent = "No products available yet.";
+  return;
+ }
+
+ area.replaceChildren();
+
+ data.forEach(item=>{
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const name = document.createElement("h3");
+  name.textContent = item.name;
+
+  const category = document.createElement("p");
+  category.textContent = item.category;
+
+  const description = document.createElement("p");
+  description.textContent = item.description || "";
+
+  const price = document.createElement("strong");
+  price.textContent = "₦" + Number(item.price).toLocaleString("en-NG");
+
+  card.append(name,category,description,price);
+  area.append(card);
+ });
+}   
 async function loadAdminDeposits(){
  try{
   const {data:{user},error:userError} = await db.auth.getUser();
@@ -584,6 +631,8 @@ async function logout(){
 }
 
 async function start(){
+ await loadProducts();
+
  const {data,error} = await db.auth.getSession();
 
  if(error){
