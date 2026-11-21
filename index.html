@@ -763,8 +763,19 @@ start();
    return;
   }
 
-  console.log("Platfone countries:",result);
-  message("Country data: " + JSON.stringify(result));
+const countrySelect = document.getElementById("smsCountry");
+
+countrySelect.replaceChildren(
+ new Option("Choose a country", "")
+);
+
+result.forEach(country => {
+ countrySelect.add(
+  new Option(country.name, country.country_id)
+ );
+});
+
+message("Loaded " + result.length + " countries successfully!");
  }catch(error){
   message("Connection failed: " + error.message);
  }
