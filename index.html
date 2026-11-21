@@ -362,7 +362,12 @@ async function createDeposit(){
    data.reference +
    ". Status: Pending."
   );
+  
+document.getElementById("transferInstructions")
+ .classList.remove("hidden");
 
+document.getElementById("transferReference").textContent =
+ data.reference;
   await loadDeposits();
 
  }catch(error){
