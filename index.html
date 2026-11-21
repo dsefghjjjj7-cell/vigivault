@@ -559,7 +559,40 @@ async function loadTransactions(){
   card.append(name,category,description,price);
   area.append(card);
  });
-}   
+} 
+ async function addProduct(){
+ const name = document.getElementById("productName").value.trim();
+ const category = document.getElementById("productCategory").value.trim();
+ const price = Number(document.getElementById("productPrice").value);
+ const description = document.getElementById("productDescription").value.trim();
+
+ if(!name || !category || !price || price <= 0){
+  message("Enter a product name, category and valid price.");
+  return;
+ }
+
+ const {error} = await db.from("products").insert({
+  name,
+  category,
+  price,
+  description,
+  is_active:true
+ });
+
+ if(error){
+  message("Could not add product: " + error.message);
+  return;
+ }
+
+ message("Product added successfully!");
+
+ document.getElementById("productName").value = "";
+ document.getElementById("productCategory").value = "";
+ document.getElementById("productPrice").value = "";
+ document.getElementById("productDescription").value = "";
+
+ await loadProducts();
+ }
 async function loadAdminDeposits(){
  try{
   const {data:{user},error:userError} = await db.auth.getUser();
