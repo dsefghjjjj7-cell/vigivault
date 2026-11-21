@@ -736,7 +736,8 @@ async function start(){
 }
 
 start();
- async function checkPlatfoneCountries(){
+
+async function checkPlatfoneCountries(){
  const {data,error:sessionError} = await db.auth.getSession();
 
  if(sessionError || !data.session){
@@ -763,33 +764,25 @@ start();
    return;
   }
 
-const countrySelect = document.getElementById("smsCountry");
+  const countrySelect = document.getElementById("smsCountry");
 
-countrySelect.replaceChildren(
- new Option("Choose a country", "")
-);
+  countrySelect.replaceChildren(
+   new Option("Choose a country", "")
+  );
 
-result.forEach(country => {
- countrySelect.add(
-  new Option(country.name, country.country_id)
- );
-});
-const countrySelect = document.getElementById("smsCountry");
+  result.forEach(country => {
+   countrySelect.add(
+    new Option(country.name, country.country_id)
+   );
+  });
 
-countrySelect.replaceChildren(
- new Option("Choose a country", "")
-);
+  message("Loaded " + result.length + " countries successfully!");
 
-result.forEach(country => {
- countrySelect.add(
-  new Option(country.name, country.country_id)
- );
-});
-
-message("Loaded " + result.length + " countries successfully!");
  }catch(error){
   message("Connection failed: " + error.message);
  }
+}
+ 
  }
 </script>
 </body>
