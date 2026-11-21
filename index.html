@@ -63,7 +63,13 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   <input id="name" placeholder="Full name">
   <input id="email" type="email" placeholder="Email address">
   <input id="password" type="password" placeholder="Password (at least 6 characters)">
-  <button onclick="register()">Create Account</button>
+  <button id="registerBtn" onclick="register()">Create Account</button>
+
+  <hr>
+  <h3>Resend confirmation email</h3>
+  <input id="resendEmail" type="email" placeholder="Your registration email">
+  <button onclick="resendConfirmation()">Resend Email</button>
+
   <hr>
   <h3>Already registered? Sign in</h3>
   <input id="loginEmail" type="email" placeholder="Email address">
@@ -78,7 +84,7 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   <button onclick="loadWallet()">Refresh Wallet</button>
   <button onclick="logout()">Sign Out</button>
  </div>
- <p id="message" class="small">Connect your account to get started.</p>
+ <p id="message" class="small">Create an account or sign in to get started.</p>
 </section>
 
 <section id="wallet">
@@ -101,76 +107,157 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://kttmvsohldtoliojdciw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_uSA360DIiv4JAUALaDJTiw_25bmxl2i"
+
+// Keep your existing Supabase publishable key between these quotes.
+const SUPABASE_KEY = "sb_publishable_uSA360DIiv4JAUALaDJTiw_25bmxl2i";
 
 const db = window.supabase.createClient(
  SUPABASE_URL,
- SUPABASE_KEY 
+ SUPABASE_KEY
 );
 
 function message(text){
- document.getElementById("message").textContent=text;
+ document.getElementById("message").textContent = text;
 }
 
 async function register(){
- const name=document.getElementById("name").value.trim();
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
+ try{
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("registerBtn");
 
- if(!name || !email || password.length<6){
-  message("Enter your name, email and a password of at least 6 characters.");
-  return;
+  if(!name || !email || password.length < 6){
+   message("Enter your name, email and a password of at least 6 characters.");
+   return;
+  }
+
+  btn.disabled = true;
+  message("Creating your account...");
+
+  const {data,error} = await db.auth.signUp({
+   email,
+   password,
+   options:{
+    data:{full_name:name},
+    emailRedirectTo:window.location.origin
+   }
+  });
+
+  if(error){
+   message(error.message);
+   return;
+  }
+
+  if(data.session){
+   await showDashboard(data.session.user);
+  }else{
+   document.getElementById("resendEmail").value = email;
+   message("Registration submitted. Open your email and click the confirmation link to activate your account. Then return here and sign in.");
+  }
+ }catch(error){
+  message("Something went wrong: " + error.message);
+ }finally{
+  document.getElementById("registerBtn").disabled = false;
  }
+}
 
- const {data,error}=await db.auth.signUp({
-  email,password,
-  options:{data:{full_name:name}}
- });
+async function resendConfirmation(){
+ try{
+  const email = document.getElementById("resendEmail").value.trim();
 
- if(error){message(error.message);return;}
+  if(!email){
+   message("Enter the email address you registered with.");
+   return;
+  }
 
- message("Registration submitted. Check your email if confirmation is required.");
- if(data.session) showDashboard(data.session.user);
+  message("Sending confirmation email...");
+
+  const {error} = await db.auth.resend({
+   type:"signup",
+   email,
+   options:{emailRedirectTo:window.location.origin}
+  });
+
+  if(error){
+   message(error.message);
+   return;
+  }
+
+  message("If this account needs confirmation, a new email should arrive shortly. Check your inbox and spam folder.");
+ }catch(error){
+  message("Could not resend email: " + error.message);
+ }
 }
 
 async function login(){
- const email=document.getElementById("loginEmail").value.trim();
- const password=document.getElementById("loginPassword").value;
+ try{
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
 
- const {data,error}=await db.auth.signInWithPassword({email,password});
- if(error){message(error.message);return;}
+  if(!email || !password){
+   message("Enter your email and password.");
+   return;
+  }
 
- showDashboard(data.user);
+  message("Signing in...");
+
+  const {data,error} = await db.auth.signInWithPassword({
+   email,
+   password
+  });
+
+  if(error){
+   message(error.message);
+   return;
+  }
+
+  await showDashboard(data.user);
+ }catch(error){
+  message("Sign-in problem: " + error.message);
+ }
 }
 
 async function showDashboard(user){
  document.getElementById("authBox").classList.add("hidden");
  document.getElementById("dashboard").classList.remove("hidden");
- document.getElementById("welcome").textContent="Welcome to VigiVault!";
- document.getElementById("userEmail").textContent=user.email;
+ document.getElementById("welcome").textContent = "Welcome to VigiVault!";
+ document.getElementById("userEmail").textContent = user.email;
  message("You are signed in.");
  await loadWallet();
 }
 
 async function loadWallet(){
- const {data:{user}}=await db.auth.getUser();
- if(!user){message("Please sign in first.");return;}
+ try{
+  const {data:{user},error:userError} = await db.auth.getUser();
 
- const {data,error}=await db
-  .from("wallets")
-  .select("balance,currency")
-  .eq("user_id",user.id)
-  .maybeSingle();
+  if(userError || !user){
+   message("Please sign in first.");
+   return;
+  }
 
- if(error){message("Could not load wallet: "+error.message);return;}
+  const {data,error} = await db
+   .from("wallets")
+   .select("balance,currency")
+   .eq("user_id",user.id)
+   .maybeSingle();
 
- if(data){
-  document.getElementById("balance").textContent=
-   new Intl.NumberFormat("en-NG",{
-    style:"currency",currency:data.currency||"NGN"
-   }).format(Number(data.balance));
- }else{
-  message("Your wallet has not been created yet. Contact the administrator.");
+  if(error){
+   message("Could not load wallet: " + error.message);
+   return;
+  }
+
+  if(data){
+   document.getElementById("balance").textContent =
+    new Intl.NumberFormat("en-NG",{
+     style:"currency",
+     currency:data.currency || "NGN"
+    }).format(Number(data.balance));
+  }else{
+   message("Your wallet has not been created yet. Contact the administrator.");
+  }
+ }catch(error){
+  message("Wallet problem: " + error.message);
  }
 }
 
@@ -178,13 +265,19 @@ async function logout(){
  await db.auth.signOut();
  document.getElementById("authBox").classList.remove("hidden");
  document.getElementById("dashboard").classList.add("hidden");
- document.getElementById("balance").textContent="₦0.00";
+ document.getElementById("balance").textContent = "₦0.00";
  message("You have signed out.");
 }
 
 async function start(){
- const {data:{session}}=await db.auth.getSession();
- if(session) showDashboard(session.user);
+ try{
+  const {data:{session}} = await db.auth.getSession();
+  if(session){
+   await showDashboard(session.user);
+  }
+ }catch(error){
+  message("Could not check your session: " + error.message);
+ }
 }
 
 start();
