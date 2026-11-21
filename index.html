@@ -95,9 +95,30 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
  <div class="card hidden" id="adminPanel">
   <h2>VigiVault Admin</h2>
   <p>Private administrator dashboard</p>
+
+  <h3>Deposit Management</h3>
   <button onclick="loadAdminDeposits()">Refresh Deposits</button>
   <div id="adminDeposits">No deposit requests loaded.</div>
- </div>
+
+  <hr>
+
+  <h3>Product Management</h3>
+
+  <input id="productName" placeholder="Product name">
+
+  <input id="productCategory" placeholder="Category (e.g. Proxy Services)">
+
+  <input id="productPrice" type="number" placeholder="Price in Naira">
+
+  <textarea id="productDescription" placeholder="Product description"></textarea>
+
+  <button onclick="addProduct()">Add Product</button>
+
+  <div id="adminProducts">Your products will appear here.</div>
+</div>
+
+<p id="message" class="small">Create an account or sign in to get started.</p>
+</section>
 
  <p id="message" class="small">Create an account or sign in to get started.</p>
 </section>
