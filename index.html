@@ -990,11 +990,12 @@ async function checkPlatfoneCountries(){
    )
   );
 
-  if(!selected){
-   message("Platform not found in permitted provider services.");
-   return;
-  }
-
+  
+if(!selected){
+ message("Provider service examples: " +
+ JSON.stringify(services.slice(0,5)));
+ return;
+}
   message("Platform: " + selected.name + " | Service ID: " + selected.service_id + " | Country ID: " + country);
  }catch(error){
   message("Connection failed: " + error.message);
