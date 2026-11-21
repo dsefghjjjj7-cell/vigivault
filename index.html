@@ -84,6 +84,16 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   <button onclick="loadWallet()">Refresh Wallet</button>
   <button onclick="logout()">Sign Out</button>
  </div>
+ <div class="card hidden" id="adminPanel">
+  <h2>VigiVault Admin</h2>
+  <p>Private administrator dashboard</p>
+
+  <button onclick="loadAdminDeposits()">Refresh Deposits</button>
+
+  <div id="adminDeposits">
+    No deposit requests loaded.
+  </div>
+ </div>
  <p id="message" class="small">Create an account or sign in to get started.</p>
 </section>
 
@@ -247,10 +257,22 @@ async function showDashboard(user){
  document.getElementById("dashboard").classList.remove("hidden");
  document.getElementById("welcome").textContent = "Welcome to VigiVault!";
  document.getElementById("userEmail").textContent = user.email;
+
+ const isAdmin = user.app_metadata?.role === "admin";
+
+ document.getElementById("adminPanel")
+  .classList.toggle("hidden", !isAdmin);
+
  message("You are signed in.");
+
  await loadWallet();
-await loadDeposits();
+ await loadDeposits();
+
+ if(isAdmin){
+  await loadAdminDeposits();
+ }
 }
+ 
 
 async function loadWallet(){
  try{
@@ -371,6 +393,86 @@ async function loadDeposits(){
   </div>`
  ).join("");
    }
+ 
+async function loadAdminDeposits(){
+ try{
+  const {data:{user},error:userError} = await db.auth.getUser();
+
+  if(userError || !user || user.app_metadata?.role !== "admin"){
+   message("Administrator access required.");
+   return;
+  }
+
+  const area = document.getElementById("adminDeposits");
+  area.textContent = "Loading deposits...";
+
+  const {data,error} = await db
+   .from("deposit_requests")
+   .select("id,user_id,amount,reference,status,created_at")
+   .order("created_at",{ascending:false});
+
+  if(error){
+   area.textContent = "Could not load deposits: " + error.message;
+   return;
+  }
+
+  area.replaceChildren();
+
+  if(!data.length){
+   area.textContent = "No deposit requests yet.";
+   return;
+  }
+
+  data.forEach(item => {
+   const card = document.createElement("div");
+   card.className = "card";
+
+   const details = document.createElement("p");
+   details.textContent =
+    "Customer ID: " + item.user_id +
+    " | Amount: ₦" + Number(item.amount).toLocaleString("en-NG") +
+    " | Reference: " + item.reference +
+    " | Status: " + item.status;
+
+   card.appendChild(details);
+
+   if(item.status === "pending"){
+    const btn = document.createElement("button");
+    btn.textContent = "Approve Verified Payment";
+    btn.onclick = () => approveDeposit(item.id,btn);
+    card.appendChild(btn);
+   }
+
+   area.appendChild(card);
+  });
+
+ }catch(error){
+  message("Admin dashboard error: " + error.message);
+ }
+}
+
+async function approveDeposit(id,button){
+ if(!confirm("Have you checked your bank account and confirmed this payment?")) return;
+
+ button.disabled = true;
+ button.textContent = "Processing...";
+
+ const {data,error} = await db.rpc("approve_deposit",{
+  p_deposit_id:id
+ });
+
+ if(error){
+  message("Approval failed: " + error.message);
+  button.disabled = false;
+  button.textContent = "Approve Verified Payment";
+  return;
+ }
+
+ message(data || "Deposit approved.");
+ await loadAdminDeposits();
+ await loadWallet();
+}
+ 
 async function logout(){
  await db.auth.signOut();
  document.getElementById("authBox").classList.remove("hidden");
