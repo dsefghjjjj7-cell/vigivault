@@ -108,7 +108,51 @@ main{
  border:1px solid var(--border);
  box-shadow:0 8px 25px #0003;
 }
+ #productList{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+ gap:20px;
+}
 
+#productList .card{
+ background:linear-gradient(145deg,#172235,#0D1421);
+ border:1px solid #5A4A32;
+ border-radius:18px;
+ padding:24px;
+ box-shadow:0 12px 30px #0004;
+ transition:transform .25s,border-color .25s;
+}
+
+#productList .card:hover{
+ transform:translateY(-5px);
+ border-color:var(--gold);
+}
+
+#productList h3{
+ color:var(--gold-light);
+ font-size:20px;
+}
+
+#productList button{
+ width:100%;
+ margin-top:15px;
+}
+#productList strong{
+ display:block;
+ color:var(--gold);
+ font-size:23px;
+ font-weight:800;
+ margin-top:18px;
+}
+
+#productList p{
+ color:var(--muted);
+ line-height:1.7;
+}
+
+#productList button{
+ letter-spacing:.4px;
+}
 input,select,textarea{
  width:100%;
  padding:14px;
@@ -1169,8 +1213,7 @@ async function checkPlatfoneCountries(){
     service.name?.toLowerCase() === platform.toLowerCase() ||
     service.alt_name?.toLowerCase() === platform.toLowerCase()
    )
-  );
-
+  )
   
 if(!selected){
  message("Provider service examples: " +
