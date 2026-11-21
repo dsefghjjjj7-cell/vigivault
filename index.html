@@ -759,7 +759,7 @@ start();
   const result = await response.json();
 
   if(!response.ok){
-   message("Connection error: " + (result.error || response.status));
+   message("Country data: " + JSON.stringify(result));
    return;
   }
 
