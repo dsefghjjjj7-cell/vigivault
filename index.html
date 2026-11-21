@@ -29,6 +29,7 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 </style>
 </head>
 <body>
+
 <header>
  <div class="brand">Vigi<span>Vault</span></div>
  <nav>
@@ -58,6 +59,7 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 
 <section id="account">
  <h2>Customer Account</h2>
+
  <div class="card" id="authBox">
   <h3>Create an account</h3>
   <input id="name" placeholder="Full name">
@@ -84,20 +86,17 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   <button onclick="loadWallet()">Refresh Wallet</button>
   <button onclick="logout()">Sign Out</button>
  </div>
+
  <div class="card hidden" id="adminPanel">
   <h2>VigiVault Admin</h2>
   <p>Private administrator dashboard</p>
-
   <button onclick="loadAdminDeposits()">Refresh Deposits</button>
-
-  <div id="adminDeposits">
-    No deposit requests loaded.
-  </div>
+  <div id="adminDeposits">No deposit requests loaded.</div>
  </div>
+
  <p id="message" class="small">Create an account or sign in to get started.</p>
 </section>
 
-<section id="wallet">
 <section id="wallet">
  <h2>My Wallet</h2>
 
@@ -110,43 +109,18 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
  <div class="card">
   <h3>Add Funds</h3>
   <p>Enter the amount you want to deposit.</p>
-
-  <input
-   id="depositAmount"
-   type="number"
-   min="100"
-   placeholder="Amount in Naira"
-  >
-
+  <input id="depositAmount" type="number" min="100" placeholder="Amount in Naira">
   <button onclick="createDeposit()">Continue to Deposit</button>
-<div id="transferInstructions" class="card hidden">
-  <h3>Bank Transfer Instructions</h3>
-  <p>Bank: MoneyMaster PSB</p>
-  <p>Account Name: Lazarus Job</p>
-  <p>Account Number: To be configured</p>
-  <p>Payment Reference:</p>
-  <h3 id="transferReference"></h3>
-  <p>Transfer the exact amount requested.</p>
-  <p>Your payment will be checked before your wallet is credited.</p>
-</div>
 
-  <hr>
+  <div id="transferInstructions" class="card hidden">
+   <h3>Bank Transfer Instructions</h3>
+   <p>Bank transfer details are not configured yet.</p>
+   <p>Please do not send money until verified receiving account details are added.</p>
+   <p>Payment Reference:</p>
+   <h3 id="transferReference"></h3>
+   <p>Your payment will be checked before your wallet is credited.</p>
+  </div>
 
-<h3>Submit Your Transfer Reference</h3>
-
-<input
- id="customerTransferReference"
- type="text"
- placeholder="Enter your bank transaction reference"
->
-
-<input type="hidden" id="currentDepositId">
-
-<button onclick="submitTransferReference()">
- Submit Transfer Reference
-</button>
-
-<p class="small" id="transferSubmitMessage"></p>
   <p class="small">
    Your deposit will remain pending until the administrator confirms payment.
   </p>
@@ -169,13 +143,10 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
 <script>
 const SUPABASE_URL = "https://kttmvsohldtoliojdciw.supabase.co";
 
-// Keep your existing Supabase publishable key between these quotes.
+// Replace this placeholder with your existing publishable key.
 const SUPABASE_KEY = "sb_publishable_uSA360DIiv4JAUALaDJTiw_25bmxl2i";
 
-const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 function message(text){
  document.getElementById("message").textContent = text;
@@ -197,8 +168,7 @@ async function register(){
   message("Creating your account...");
 
   const {data,error} = await db.auth.signUp({
-   email,
-   password,
+   email,password,
    options:{
     data:{full_name:name},
     emailRedirectTo:window.location.origin
@@ -214,7 +184,7 @@ async function register(){
    await showDashboard(data.session.user);
   }else{
    document.getElementById("resendEmail").value = email;
-   message("Registration submitted. Open your email and click the confirmation link to activate your account. Then return here and sign in.");
+   message("Registration submitted. Check your email to confirm your account, then sign in.");
   }
  }catch(error){
   message("Something went wrong: " + error.message);
@@ -224,31 +194,22 @@ async function register(){
 }
 
 async function resendConfirmation(){
- try{
-  const email = document.getElementById("resendEmail").value.trim();
+ const email = document.getElementById("resendEmail").value.trim();
 
-  if(!email){
-   message("Enter the email address you registered with.");
-   return;
-  }
-
-  message("Sending confirmation email...");
-
-  const {error} = await db.auth.resend({
-   type:"signup",
-   email,
-   options:{emailRedirectTo:window.location.origin}
-  });
-
-  if(error){
-   message(error.message);
-   return;
-  }
-
-  message("If this account needs confirmation, a new email should arrive shortly. Check your inbox and spam folder.");
- }catch(error){
-  message("Could not resend email: " + error.message);
+ if(!email){
+  message("Enter your registration email.");
+  return;
  }
+
+ message("Sending confirmation email...");
+
+ const {error} = await db.auth.resend({
+  type:"signup",
+  email,
+  options:{emailRedirectTo:window.location.origin}
+ });
+
+ message(error ? error.message : "Check your inbox and spam folder for the confirmation email.");
 }
 
 async function login(){
@@ -263,10 +224,7 @@ async function login(){
 
   message("Signing in...");
 
-  const {data,error} = await db.auth.signInWithPassword({
-   email,
-   password
-  });
+  const {data,error} = await db.auth.signInWithPassword({email,password});
 
   if(error){
    message(error.message);
@@ -288,7 +246,7 @@ async function showDashboard(user){
  const isAdmin = user.app_metadata?.role === "admin";
 
  document.getElementById("adminPanel")
-  .classList.toggle("hidden", !isAdmin);
+  .classList.toggle("hidden",!isAdmin);
 
  message("You are signed in.");
 
@@ -299,7 +257,6 @@ async function showDashboard(user){
   await loadAdminDeposits();
  }
 }
- 
 
 async function loadWallet(){
  try{
@@ -328,25 +285,24 @@ async function loadWallet(){
      currency:data.currency || "NGN"
     }).format(Number(data.balance));
   }else{
-   message("Your wallet has not been created yet. Contact the administrator.");
+   document.getElementById("balance").textContent = "₦0.00";
+   message("Your wallet has not been created yet.");
   }
  }catch(error){
   message("Wallet problem: " + error.message);
  }
 }
+
 async function createDeposit(){
  try{
-  const amount = Number(
-   document.getElementById("depositAmount").value
-  );
+  const amount = Number(document.getElementById("depositAmount").value);
 
   if(!Number.isFinite(amount) || amount < 100){
    message("Enter a valid amount of at least ₦100.");
    return;
   }
 
-  const {data:{user},error:userError} =
-   await db.auth.getUser();
+  const {data:{user},error:userError} = await db.auth.getUser();
 
   if(userError || !user){
    message("Please sign in before requesting a deposit.");
@@ -360,11 +316,7 @@ async function createDeposit(){
 
   const {data,error} = await db
    .from("deposit_requests")
-   .insert({
-    user_id:user.id,
-    amount:amount,
-    reference:reference
-   })
+   .insert({user_id:user.id,amount:amount,reference:reference})
    .select()
    .single();
 
@@ -374,18 +326,10 @@ async function createDeposit(){
   }
 
   document.getElementById("depositAmount").value = "";
+  document.getElementById("transferInstructions").classList.remove("hidden");
+  document.getElementById("transferReference").textContent = data.reference;
 
-  message(
-   "Deposit request created. Reference: " +
-   data.reference +
-   ". Status: Pending."
-  );
-  
-document.getElementById("transferInstructions")
- .classList.remove("hidden");
-
-document.getElementById("transferReference").textContent =
- data.reference;
+  message("Deposit request created. Status: Pending.");
   await loadDeposits();
 
  }catch(error){
@@ -393,10 +337,9 @@ document.getElementById("transferReference").textContent =
  }
 }
 
-
 async function loadDeposits(){
- const {data:{user}} = await db.auth.getUser();
- if(!user) return;
+ const {data:{user},error:userError} = await db.auth.getUser();
+ if(userError || !user) return;
 
  const {data,error} = await db
   .from("deposit_requests")
@@ -416,9 +359,9 @@ async function loadDeposits(){
   return;
  }
 
- history.innerHTML = "";
+ history.replaceChildren();
 
- data.forEach(item => {
+ data.forEach(item=>{
   const card = document.createElement("div");
   card.className = "card";
 
@@ -431,20 +374,20 @@ async function loadDeposits(){
   const status = document.createElement("p");
   status.textContent = "Status: " + item.status;
 
-  card.append(amount, ref, status);
+  card.append(amount,ref,status);
 
   if(item.customer_transfer_reference){
    const submitted = document.createElement("p");
    submitted.textContent = "Bank Transfer Reference: " + item.customer_transfer_reference;
    card.append(submitted);
-  } else if(item.status === "pending"){
+  }else if(item.status === "pending"){
    const input = document.createElement("input");
    input.placeholder = "Enter bank transfer reference";
 
    const button = document.createElement("button");
    button.textContent = "Submit Transfer Reference";
 
-   button.onclick = async () => {
+   button.onclick = async ()=>{
     const value = input.value.trim();
 
     if(!value){
@@ -473,14 +416,13 @@ async function loadDeposits(){
     await loadDeposits();
    };
 
-   card.append(input, button);
+   card.append(input,button);
   }
 
   history.append(card);
  });
 }
 
- 
 async function loadAdminDeposits(){
  try{
   const {data:{user},error:userError} = await db.auth.getUser();
@@ -495,7 +437,7 @@ async function loadAdminDeposits(){
 
   const {data,error} = await db
    .from("deposit_requests")
-   .select("id,user_id,amount,reference,status,created_at")
+   .select("id,user_id,amount,reference,status,customer_transfer_reference,created_at")
    .order("created_at",{ascending:false});
 
   if(error){
@@ -505,12 +447,12 @@ async function loadAdminDeposits(){
 
   area.replaceChildren();
 
-  if(!data.length){
+  if(!data || !data.length){
    area.textContent = "No deposit requests yet.";
    return;
   }
 
-  data.forEach(item => {
+  data.forEach(item=>{
    const card = document.createElement("div");
    card.className = "card";
 
@@ -519,6 +461,8 @@ async function loadAdminDeposits(){
     "Customer ID: " + item.user_id +
     " | Amount: ₦" + Number(item.amount).toLocaleString("en-NG") +
     " | Reference: " + item.reference +
+    " | Bank Transfer Reference: " +
+    (item.customer_transfer_reference || "Not submitted") +
     " | Status: " + item.status;
 
    card.appendChild(details);
@@ -526,7 +470,7 @@ async function loadAdminDeposits(){
    if(item.status === "pending"){
     const btn = document.createElement("button");
     btn.textContent = "Approve Verified Payment";
-    btn.onclick = () => approveDeposit(item.id,btn);
+    btn.onclick = ()=>approveDeposit(item.id,btn);
     card.appendChild(btn);
    }
 
@@ -559,15 +503,31 @@ async function approveDeposit(id,button){
  await loadAdminDeposits();
  await loadWallet();
 }
- 
+
 async function logout(){
  await db.auth.signOut();
  document.getElementById("authBox").classList.remove("hidden");
  document.getElementById("dashboard").classList.add("hidden");
+ document.getElementById("adminPanel").classList.add("hidden");
+ document.getElementById("transferInstructions").classList.add("hidden");
  document.getElementById("balance").textContent = "₦0.00";
  message("You have signed out.");
 }
 
+async function start(){
+ const {data,error} = await db.auth.getSession();
+
+ if(error){
+  message("Could not restore your session. Please sign in.");
+  return;
+ }
+
+ if(data.session){
+  await showDashboard(data.session.user);
+ }
+}
+
+start();
 </script>
 </body>
 </html>
