@@ -61,7 +61,43 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
   Loading products...
  </div>
 </section>
+<section id="sms">
+ <h2>International SMS Verification</h2>
+ <p>Choose a country and platform for supported SMS verification services.</p>
 
+ <div class="card">
+  <label>Select Country</label>
+  <select id="smsCountry">
+   <option value="">Choose a country</option>
+   <option>United States</option>
+   <option>United Kingdom</option>
+   <option>Canada</option>
+   <option>Germany</option>
+   <option>France</option>
+   <option>Australia</option>
+   <option>Netherlands</option>
+   <option>India</option>
+   <option>Nigeria</option>
+   <option>Other countries (provider availability)</option>
+  </select>
+
+  <label>Select Platform</label>
+  <select id="smsPlatform">
+   <option value="">Choose a platform</option>
+   <option>WhatsApp</option>
+   <option>Telegram</option>
+   <option>Facebook</option>
+   <option>Instagram</option>
+   <option>Other supported platforms</option>
+  </select>
+
+  <button onclick="message('SMS provider connection is coming soon.')">
+   Check Available Numbers
+  </button>
+
+  <p>Number availability and pricing will appear after provider integration.</p>
+ </div>
+</section>
 <section id="account">
  <h2>Customer Account</h2>
 
