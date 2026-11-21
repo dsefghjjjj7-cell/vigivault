@@ -726,6 +726,7 @@ async function logout(){
  message("You have signed out.");
 }
 
+
 async function start(){
  await loadProducts();
 
@@ -739,7 +740,7 @@ async function start(){
  if(data.session){
   await showDashboard(data.session.user);
  }
-
+}
 
 start();
 
