@@ -995,7 +995,7 @@ if(!selected){
  JSON.stringify(services.slice(0,5)));
  return;
 }
-  message("Platform: " + selected.name + " | Service ID: " + selected.service_id + " | Country ID: " + country);
+  message("Country data: " + JSON.stringify(result.slice(0,3)));
  }catch(error){
   message("Connection failed: " + error.message);
  }
