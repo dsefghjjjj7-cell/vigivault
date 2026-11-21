@@ -764,7 +764,7 @@ start();
   }
 
   console.log("Platfone countries:",result);
-  message("Country list received successfully. Check browser console.");
+  message("Country data: " + JSON.stringify(result));
  }catch(error){
   message("Connection failed: " + error.message);
  }
