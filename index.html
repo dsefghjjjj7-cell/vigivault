@@ -202,7 +202,16 @@ footer{text-align:center;background:#142b46;color:white;padding:25px}
  <p>Your Digital Marketplace</p>
  <p class="small">© 2026 VigiVault</p>
 </footer>
-
+<script>
+window.addEventListener("error", function(event){
+ const box = document.getElementById("message");
+ if(box){
+  box.textContent =
+   "JavaScript error: " + event.message +
+   " | Line: " + event.lineno;
+ }
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://kttmvsohldtoliojdciw.supabase.co";
