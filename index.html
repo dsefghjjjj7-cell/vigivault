@@ -484,14 +484,36 @@ img{max-width:100%;border-radius:12px}
   <input id="depositAmount" type="number" min="100" placeholder="Amount in Naira">
   <button onclick="createDeposit()">Continue to Deposit</button>
 
-  <div id="transferInstructions" class="card hidden">
-   <h3>Bank Transfer Instructions</h3>
-   <p>Bank transfer details are not configured yet.</p>
-   <p>Please do not send money until verified receiving account details are added.</p>
-   <p>Payment Reference:</p>
-   <h3 id="transferReference"></h3>
-   <p>Your payment will be checked before your wallet is credited.</p>
-  </div>
+  
+<div id="transferInstructions" class="card hidden">
+  <h3>Bank Transfer Instructions</h3>
+
+  <p>Transfer the exact amount to our official bank account:</p>
+
+  <p><strong>Bank Name:</strong> Moneymaster PSB </p>
+
+  <p><strong>Account Name:</strong> Job Lazarus</p>
+
+  <p><strong>Account Number:</strong> 811 995 3758</p>
+
+  <hr>
+
+  <p>Your VigiVault Deposit Reference:</p>
+  <h3 id="transferReference"></h3>
+
+  <p>
+    Include your deposit reference in your transfer description
+    if your banking app allows it.
+  </p>
+
+  <p>
+    After transferring, return to your dashboard and submit
+    your bank transfer reference.
+  </p>
+
+  <p>Your wallet will be credited after payment verification.</p>
+</div>
+
 
   <p class="small">
    Your deposit will remain pending until the administrator confirms payment.
