@@ -1325,11 +1325,10 @@ async function checkPlatfoneCountries(){
   )
   
 if(!selected){
- message("Provider service examples: " +
- JSON.stringify(services.slice(0,5)));
+ message("This platform is not currently available. Please choose another platform.");
  return;
 }
-  message("Country data: " + JSON.stringify(result.slice(0,3)));
+  message("Provider services loaded successfully.");
  }catch(error){
   message("Connection failed: " + error.message);
  }
