@@ -1160,12 +1160,18 @@ async function loadAdminDeposits(){
 
    card.appendChild(details);
 
-   if(item.status === "pending"){
+   
+if(item.status === "pending" && item.customer_transfer_reference){
     const btn = document.createElement("button");
     btn.textContent = "Approve Verified Payment";
     btn.onclick = ()=>approveDeposit(item.id,btn);
     card.appendChild(btn);
-   }
+}else if(item.status === "pending"){
+    const waiting = document.createElement("p");
+    waiting.textContent = "Waiting for customer transfer reference.";
+    card.appendChild(waiting);
+}
+
 
    area.appendChild(card);
   });
